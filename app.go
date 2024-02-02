@@ -1,26 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"io"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
-func fetchRss(token string) ([]byte, error) {
-	resp, err := http.Get("https://mikanani.me/RSS/MyBangumi?token=" + token)
+func handler(c echo.Context) error {
+	token := c.FormValue("token")
+	if token == "" {
+		return c.String(http.StatusForbidden, "token is null")
+	}
+
+	rssData, err := fetchRss(token)
 	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch RSS content: %s", resp.Status)
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	data, err := fixDate(rssData)
 	if err != nil {
-		return nil, err
+		return c.String(http.StatusForbidden, err.Error())
 	}
 
-	return body, nil
+	return c.Blob(http.StatusOK, echo.MIMEApplicationXMLCharsetUTF8, data)
 }
