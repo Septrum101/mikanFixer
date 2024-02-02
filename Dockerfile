@@ -7,9 +7,9 @@ COPY . .
 
 RUN go mod tidy
 RUN go build -trimpath -ldflags="-s -w \
-    -X 'github.com/thank243/mikanFixer/version.date=$(date -Iseconds)' \
-    -X 'github.com/thank243/mikanFixer/version.version=$VERSION' \
-    " -v -o mikanFixer main.go
+    -X 'main.date=$(date -Iseconds)' \
+    -X 'main.version=$VERSION' \
+    " -v -o mikanFixer
 
 FROM alpine
 
