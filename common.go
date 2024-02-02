@@ -11,6 +11,8 @@ import (
 	"github.com/beevik/etree"
 )
 
+var host string
+
 func fixDate(resp []byte) ([]byte, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromBytes(resp); err != nil {
@@ -42,7 +44,7 @@ func fixDate(resp []byte) ([]byte, error) {
 }
 
 func fetchRss(token string) ([]byte, error) {
-	resp, err := http.Get("https://mikanani.me/RSS/MyBangumi?token=" + token)
+	resp, err := http.Get(fmt.Sprintf("https://%s/RSS/MyBangumi?token=%s", host, token))
 	if err != nil {
 		return nil, err
 	}

@@ -19,6 +19,7 @@ func main() {
 	fmt.Println(getVersion())
 
 	addr := flag.String("l", ":8081", "The listen address of service.")
+	flag.StringVar(&host, "d", "mikanani.me", "The host of RSS.")
 	flag.Parse()
 
 	e := echo.New()
