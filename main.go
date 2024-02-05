@@ -5,10 +5,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -26,7 +26,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Add(echo.GET, "/", handler)
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
 	defer stop()
 	// Start server
 	go func() {
@@ -37,9 +37,11 @@ func main() {
 
 	// Wait for interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
 	<-ctx.Done()
+	e.Logger.Info("starting shutdown the server..")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		log.Fatal(err)
+		e.Logger.Fatal(err)
 	}
+	e.Logger.Info("shutdown the server success")
 }
