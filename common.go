@@ -32,7 +32,7 @@ func fixDate(resp []byte) ([]byte, error) {
 		if err != nil {
 			log.Print(err)
 		}
-		el.CreateElement("pubDate").SetText(pubTime.Format(time.RFC1123Z))
+		elPubDate.SetText(pubTime.Format(time.RFC1123Z))
 	}
 
 	b, err := doc.WriteToBytes()
