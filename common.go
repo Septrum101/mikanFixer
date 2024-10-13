@@ -31,8 +31,10 @@ func fixDate(resp []byte) ([]byte, error) {
 		pubTime, err := time.ParseInLocation("2006-01-02T15:04:05", elPubDate.Text(), time.FixedZone("CST", 60*60*8))
 		if err != nil {
 			log.Print(err)
+			continue
 		}
-		elPubDate.SetText(pubTime.Format(time.RFC1123Z))
+		// pub date must on the parent path
+		el.CreateElement("pubDate").SetText(pubTime.Format(time.RFC1123Z))
 	}
 
 	b, err := doc.WriteToBytes()
